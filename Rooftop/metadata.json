@@ -1,0 +1,5 @@
+{
+  "name": "Suriyaverify",
+  "description": "A floating chatbot component using React, Tailwind CSS, and the Google GenAI SDK (Gemini 2.5 Flash).",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PM Surya Ghar: AI Verification</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet (OpenStreetMap) -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+
+    <!-- React / Main entry -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Tailwind Custom Config -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              slate: {
+                850: '#151e2e',
+              },
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.9)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              pulseGreen: {
+                '0%, 100%': {
+                  opacity: '1',
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  opacity: '0.7',
+                  transform: 'scale(1.1)',
+                  color: '#22c55e',
+                },
+              },
+              pulseYellow: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.6', color: '#eab308' },
+              },
+              pulseRed: {
+                '0%, 100%': {
+                  opacity: '1',
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  opacity: '0.7',
+                  transform: 'scale(1.1)',
+                  color: '#ef4444',
+                },
+              },
+              pulseSky: {
+                '0%, 100%': {
+                  opacity: '1',
+                  transform: 'scale(1)',
+                },
+                '50%': {
+                  opacity: '0.7',
+                  transform: 'scale(1.1)',
+                  color: '#0ea5e9',
+                },
+              },
+              iconPop: {
+                '0%': { transform: 'scale(0.5)' },
+                '70%': { transform: 'scale(1.2)' },
+                '100%': { transform: 'scale(1)' },
+              },
+            },
+            animation: {
+              fadeIn: 'fadeIn 0.3s ease-out',
+              'scale-in': 'scaleIn 0.2s ease-out',
+              'pulse-green': 'pulseGreen 2s infinite',
+              'pulse-yellow': 'pulseYellow 2s infinite',
+              'pulse-red': 'pulseRed 2s infinite',
+              'pulse-sky': 'pulseSky 2s infinite',
+              'icon-pop': 'iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'fade-in': 'fadeIn 0.4s ease-out',
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom styles -->
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(-45deg, #a1c4fd, #c2e9fb, #d4e4f7, #f0f8ff);
+        background-size: 400% 400%;
+        animation: gradient-animation-light 15s ease infinite;
+      }
+      html.dark body {
+        background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #0f172a);
+        background-size: 400% 400%;
+        animation: gradient-animation-dark 15s ease infinite;
+      }
+
+      @keyframes gradient-animation-light {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @keyframes gradient-animation-dark {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* Scrollbars */
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(56, 189, 248, 0.3);
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(56, 189, 248, 0.6);
+      }
+
+      /* Neon text */
+      .neon-text {
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+      .dark .neon-text {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.2),
+          0 0 10px rgba(255, 255, 255, 0.1);
+      }
+
+      /* Glass surface */
+      .glass-pane {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      .dark .glass-pane {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Tooltips */
+      .tooltip-container {
+        position: relative;
+      }
+      .tooltip-container::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        padding: 6px 10px;
+        background: rgba(15, 23, 42, 0.9);
+        color: white;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s;
+        z-index: 100;
+      }
+      .tooltip-container:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Custom pin for OpenStreetMap markers */
+      .custom-pin {
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        transition: transform 0.2s;
+      }
+      .custom-pin:hover {
+        transform: scale(1.1) translateY(-5px);
+      }
+
+      /* Hover animations */
+      .animate-icon-on-hover {
+        transition: transform 0.3s ease-in-out;
+      }
+      .group:hover .animate-icon-on-hover {
+        transform: scale(1.15) rotate(-5deg);
+      }
+    </style>
+
+    <!-- Import maps for CDN React + Lucide -->
+    <script type="importmap">
+      {
+        "imports": {
+          "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+          "react/": "https://aistudiocdn.com/react@^19.2.0/",
+          "react": "https://aistudiocdn.com/react@^19.2.0",
+          "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+          "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+          "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+          "jspdf": "https://aistudiocdn.com/jspdf@^2.5.1/dist/jspdf.es.min.js"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Main React app -->
+    <script type="module" src="./index.tsx"></script>
+  </body>
+</html>
