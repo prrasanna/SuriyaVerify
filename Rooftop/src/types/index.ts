@@ -1,7 +1,11 @@
 // ----------------------------------------------
 // 1. Site Data
+
+import type { ReactNode } from "react";
+
 // ----------------------------------------------
 export interface SiteData {
+  capture_date: ReactNode;
   sample_id: string;
   latitude: number;
   longitude: number;

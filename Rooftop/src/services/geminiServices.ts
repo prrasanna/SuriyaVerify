@@ -1,103 +1,136 @@
-import type { VerificationResult } from "../types";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// src/services/geminiServices.ts
+import type { VerificationResult, SiteData } from "../types";
 
-// ----------------------------------------
-// INIT GEMINI CLIENT
-// ----------------------------------------
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+/**
+ * Mock delay helper
+ */
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// =====================================================
-// 1️⃣ TEXT VERIFICATION (Prompt → Plain Text → JSON parsed outside)
-// =====================================================
-export async function verifySolarInstallation(input: string): Promise<string> {
+/**
+ * Verify Solar Installation (mocked if backend not running)
+ */
+export const verifySolarInstallation = async (
+  site: SiteData
+): Promise<VerificationResult> => {
   try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+    // Uncomment the lines below if your backend is running
+    /*
+    const response = await fetch("http://localhost:3001/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cityCode: site.sample_id }),
     });
+    const data = await response.json();
+    */
 
-    const result = await model.generateContent(input);
+    // Mock data (works even without backend)
+    await delay(500); // simulate network
+    const data = {
+      success: true,
+      has_solar: true,
+      confidence: 0.92,
+      panel_count_est: 12,
+      capacity_kw_est: 5,
+      pv_area_sqm_est: 48,
+      panel_type_est: "Mono-Si",
+      qc_notes: ["Mock: Verified successfully"],
+      message: "Mock verification",
+    };
 
-    return result.response.text().trim();
-  } catch (error) {
-    console.error("❌ Error in verifySolarInstallation:", error);
-    throw new Error("Failed to analyze text input");
-  }
-}
-
-// =====================================================
-// 2️⃣ IMAGE VERIFICATION — STRICT VALID JSON
-// =====================================================
-export async function verifySolarInstallationFromImage(
-  base64: string,
-  mimeType: string
-): Promise<VerificationResult> {
-  try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-    });
-
-    // STRICT JSON PROMPT
-    const prompt = `
-      Analyze this rooftop image and return ONLY valid JSON.
-      NO explanations. NO extra text. ONLY a JSON object.
-
-      Required JSON format:
-
-      {
-        "sample_id": "",
-        "qc_status": "VERIFIABLE" | "NOT_VERIFIABLE",
-        "has_solar": true,
-        "confidence": 0.95,
-
-        "panel_count_est": 0,
-        "capacity_kw_est": 0,
-
-        "lat": 0,
-        "lon": 0,
-
-        "pv_area_sqm_est": 0,
-        "panel_type_est": "",
-
-        "image_metadata": {
-          "source": "",
-          "capture_date": ""
-        },
-
-        "qc_notes": [],
-
-        "potential_panel_count_est": 0,
-        "potential_capacity_kw_est": 0,
-        "potential_pv_area_sqm_est": 0,
-        "potential_placement_recommendation": "",
-        "potential_panel_type_recommendation": ""
-      }
-    `;
-
-    // IMAGE + PROMPT INPUT
-    const response = await model.generateContent([
-      {
-        inlineData: {
-          data: base64,
-          mimeType,
-        },
+    return {
+      sample_id: site.sample_id,
+      qc_status: data.success ? "VERIFIABLE" : "NOT_VERIFIABLE",
+      has_solar: data.has_solar ?? false,
+      confidence: data.confidence ?? 0,
+      panel_count_est: data.panel_count_est,
+      capacity_kw_est: data.capacity_kw_est,
+      pv_area_sqm_est: data.pv_area_sqm_est,
+      panel_type_est: data.panel_type_est,
+      image_metadata: {
+        source: "Mock AI Verification",
+        capture_date: new Date().toISOString().split("T")[0],
       },
-      { text: prompt },
-    ]);
-
-    const rawText = response.response.text().trim();
-
-    // DEBUG (optional)
-    // console.log("🔵 RAW AI OUTPUT:", rawText);
-
-    // Parse JSON safely
-    try {
-      return JSON.parse(rawText) as VerificationResult;
-    } catch (err) {
-      console.error("❌ AI returned invalid JSON:", rawText);
-      throw new Error("AI returned invalid JSON. Cannot parse result.");
-    }
-  } catch (error) {
-    console.error("❌ Error in verifySolarInstallationFromImage:", error);
-    throw new Error("Failed to analyze image data");
+      qc_notes: data.qc_notes ?? [data.message || "No details"],
+      message: data.message,
+    } as VerificationResult;
+  } catch (err: any) {
+    console.error(err);
+    return {
+      sample_id: site.sample_id,
+      qc_status: "NOT_VERIFIABLE",
+      has_solar: false,
+      confidence: 0,
+      image_metadata: {
+        source: "Mock AI Verification",
+        capture_date: new Date().toISOString().split("T")[0],
+      },
+      qc_notes: [err.message || "Unknown error"],
+      message: err.message,
+    };
   }
-}
+};
+
+/**
+ * Verify Image Upload (mocked)
+ */
+export const verifyImage = async (
+  _base64Data: string,
+  _mimeType: string
+): Promise<VerificationResult> => {
+  try {
+    // Uncomment if backend is running
+    /*
+    const response = await fetch("http://localhost:3001/api/verify-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64Data, mimeType }),
+    });
+    const data = await response.json();
+    */
+
+    // Mock response
+    await delay(500); // simulate network
+    const data = {
+      success: true,
+      has_solar: true,
+      confidence: 0.88,
+      panel_count_est: 8,
+      capacity_kw_est: 4,
+      pv_area_sqm_est: 35,
+      panel_type_est: "Poly-Si",
+      qc_notes: ["Mock: Image verified successfully"],
+      message: "Mock image verification",
+    };
+
+    return {
+      sample_id: `IMG-${Date.now()}`,
+      qc_status: data.success ? "VERIFIABLE" : "NOT_VERIFIABLE",
+      has_solar: data.has_solar ?? false,
+      confidence: data.confidence ?? 0,
+      panel_count_est: data.panel_count_est,
+      capacity_kw_est: data.capacity_kw_est,
+      pv_area_sqm_est: data.pv_area_sqm_est,
+      panel_type_est: data.panel_type_est,
+      image_metadata: {
+        source: "Mock Direct Upload",
+        capture_date: new Date().toISOString().split("T")[0],
+      },
+      qc_notes: data.qc_notes ?? [data.message || "No details"],
+      message: data.message,
+    } as VerificationResult;
+  } catch (err: any) {
+    console.error(err);
+    return {
+      sample_id: `IMG-${Date.now()}`,
+      qc_status: "NOT_VERIFIABLE",
+      has_solar: false,
+      confidence: 0,
+      image_metadata: {
+        source: "Mock Direct Upload",
+        capture_date: new Date().toISOString().split("T")[0],
+      },
+      qc_notes: [err.message || "Unknown error"],
+      message: err.message,
+    };
+  }
+};
