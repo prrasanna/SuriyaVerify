@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { Bot, X, Send, Sun } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useTranslations } from "../hooks/useTranslations";
 
 interface ChatbotProps {
@@ -17,7 +16,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ language }) => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const chatSessionRef: any = useRef(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -26,49 +24,25 @@ const Chatbot: React.FC<ChatbotProps> = ({ language }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Autofocus input when opened
+  // Autofocus when chat opens
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
 
-  // Initialize Gemini chat
+  // Show welcome message only once when chat opens
   useEffect(() => {
-    const initializeChat = async () => {
-      try {
-        const genAI = new GoogleGenerativeAI(
-          import.meta.env.VITE_GEMINI_API_KEY
-        );
+    if (!isOpen) return;
 
-        const model = genAI.getGenerativeModel({
-          model: "gemini-2.0-flash",
-          systemInstruction: t("chatbot.system.prompt"),
-        });
+    setMessages([{ role: "model", content: t("chatbot.welcome") }]);
+  }, [isOpen]);
 
-        const chat = model.startChat({
-          history: [],
-        });
-
-        chatSessionRef.current = chat;
-
-        setMessages([{ role: "model", content: t("chatbot.welcome") }]);
-      } catch (err) {
-        console.error("Failed to initialize Gemini:", err);
-        setMessages([
-          {
-            role: "model",
-            content: "AI service is unavailable. Please try again later.",
-          },
-        ]);
-      }
-    };
-
-    if (isOpen) initializeChat();
-  }, [language, isOpen, t]);
-
+  // Toggle chat window
   const handleToggleChat = () => setIsOpen((prev) => !prev);
 
+  // Send user message → backend
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const trimmed = inputValue.trim();
     if (!trimmed || isLoading) return;
 
@@ -79,39 +53,37 @@ const Chatbot: React.FC<ChatbotProps> = ({ language }) => {
       newUserMessage,
       { role: "model", content: "" },
     ]);
+
     setInputValue("");
     setIsLoading(true);
 
     try {
-      if (!chatSessionRef.current) throw new Error("Chat session missing");
+      const response = await fetch("http://localhost:5000/api/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages }),
+    });
 
-      const result = await chatSessionRef.current.sendMessageStream(trimmed);
-
-      let fullText = "";
-
-      for await (const chunk of result.stream) {
-        const text = chunk.text();
-        fullText += text;
-
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: "model", content: fullText };
-          return updated;
-        });
+      if (!response.ok) {
+        throw new Error("Backend error");
       }
 
-      if (!fullText.trim()) {
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            role: "model",
-            content: "I couldn't generate a response. Try again.",
-          };
-          return updated;
-        });
-      }
+      const data = await response.json();
+      const fullText = data.reply;
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          role: "model",
+          content: fullText || "I couldn't generate a response. Try again.",
+        };
+        return updated;
+      });
     } catch (err) {
       console.error("Send error:", err);
+
       setMessages((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
@@ -191,7 +163,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ language }) => {
             <div ref={messagesEndRef}></div>
           </div>
 
-          {/* Input Box */}
+          {/* Input */}
           <form
             onSubmit={handleSendMessage}
             className="p-4 border-t border-white/30 flex gap-2"
