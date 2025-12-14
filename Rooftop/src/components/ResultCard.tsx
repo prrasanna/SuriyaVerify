@@ -33,7 +33,14 @@ interface ResultCardProps {
 const ResultCard: React.FC<ResultCardProps> = ({ result, imageUrl, language }) => {
   const { t } = useTranslations(language);
 
-  const qcConfig = QC_STATUS_CONFIG[result.qc_status];
+ const qcConfig =
+  QC_STATUS_CONFIG[result.qc_status] ?? {
+    bgColor: 'bg-slate-400/30',
+    textColor: 'text-slate-700 dark:text-slate-300',
+    borderColor: 'border-slate-400/50',
+    icon: <X size={16} />,
+  };
+
 
   const hasSolar = result.has_solar;
   const hasPotential =
