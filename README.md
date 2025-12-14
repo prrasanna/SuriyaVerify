@@ -1,8 +1,5 @@
-<img width="1920" height="1080" alt="Screenshot (199)" src="https://github.com/user-attachments/assets/2bcadba9-5b5e-493a-86dc-432d809fa4ae" />
-<img width="1920" height="1080" alt="Screenshot (200)" src="https://github.com/user-attachments/assets/a243d0c5-1deb-44b8-865d-1b53daa26bc1" />
-<img width="1920" height="1080" alt="Screenshot (201)" src="https://github.com/user-attachments/assets/824d09f0-3534-4ecd-9567-ca9cdfa59235" />
-<img width="1920" height="1080" alt="Screenshot (202)" src="https://github.com/user-attachments/assets/96ce3e3b-6e0f-4137-be4b-145981f246b9" />
-<img width="1920" height="1080" alt="Screenshot (203)" src="https://github.com/user-attachments/assets/cd9c6a27-3065-4449-9fd8-94797353397e" />
+
+[Prototype.pdf](https://github.com/user-attachments/files/24152375/Prototype.pdf)
 
 
 🔧 Hardware Integration (Proposed)
@@ -67,5 +64,9 @@ Real-time IoT data streaming instead of file upload.
 Direct inverter communication using RS485 / Modbus.
 
 Mobile and web-based live monitoring system.
+
+_ _ _
+
+Block Diagram.
 
 <img width="1024" height="1536" alt="file_00000000ef3c720890ba003c34aa17bd" src="https://github.com/user-attachments/assets/6bca5768-e69c-46e2-92c2-10aa09d0cb2b" />
