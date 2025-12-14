@@ -1,22 +1,26 @@
+import { useCallback } from 'react';
 import { translations, defaultLang } from '../lib/translations';
 
-type LanguageCode = 'en' | 'hi' | 'bn' | 'te' | 'mr' | 'ta' | 'gu';
+export const useTranslations = (language: string) => {
+  const t = useCallback(
+    (key: string, replacements?: Record<string, string | number>) => {
+      const lang = language || defaultLang;
 
-export const useTranslations = (lang: string) => {
-  const t = (key: string, replacements?: Record<string, string | number>): string => {
-    const langKey = lang as LanguageCode;
-    // Find the translation for the given language, or fallback to the default language (English)
-    let text = translations[key]?.[langKey] || translations[key]?.[defaultLang] || key;
+      let text =
+        translations[key]?.[lang] ??
+        translations[key]?.[defaultLang] ??
+        key;
 
-    // Replace placeholders like {count}
-    if (replacements) {
-        Object.keys(replacements).forEach(placeholder => {
-            text = text.replace(`{${placeholder}}`, String(replacements[placeholder]));
+      if (replacements) {
+        Object.entries(replacements).forEach(([k, v]) => {
+          text = text.replace(`{${k}}`, String(v));
         });
-    }
+      }
 
-    return text;
-  };
+      return text;
+    },
+    [language]
+  );
 
   return { t };
 };
