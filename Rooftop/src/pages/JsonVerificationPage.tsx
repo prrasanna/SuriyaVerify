@@ -14,7 +14,7 @@ interface JsonVerificationPageProps {
 type Step = 'UPLOAD' | 'PREVIEW' | 'PROCESSING' | 'RESULTS';
 
 const JsonVerificationPage: React.FC<JsonVerificationPageProps> = ({ language }) => {
-  const { t } = useTranslations(language);
+   useTranslations(language);
   const [step, setStep] = useState<Step>('UPLOAD');
   const [jsonData, setJsonData] = useState<SiteData[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
@@ -132,7 +132,7 @@ const JsonVerificationPage: React.FC<JsonVerificationPageProps> = ({ language })
                     </div>
                     <div>
                         <h3 className="text-3xl font-bold text-slate-700 dark:text-slate-200 mb-2">JSON Upload</h3>
-                        <p className="text-slate-500 dark:text-slate-400 text-lg">{t('upload.drag')}</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-lg">Drag & Drop or Click to Upload</p>
                     </div>
                 </label>
             </div>

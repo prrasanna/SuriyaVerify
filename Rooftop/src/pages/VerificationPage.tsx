@@ -52,6 +52,7 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ language }) => {
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
           {t("verification.intro.desc")}
         </p>
+        
       </div>
 
       {/* Tabs */}
@@ -85,6 +86,7 @@ const VerificationPage: React.FC<VerificationPageProps> = ({ language }) => {
               </button>
             );
           })}
+
         </div>
       </div>
 

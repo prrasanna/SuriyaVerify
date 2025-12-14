@@ -158,8 +158,8 @@ const CsvVerificationPage: React.FC<CsvVerificationPageProps> = ({ language }) =
               </div>
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-slate-700 dark:text-slate-200 mb-2">{t('upload.title')}</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-lg">{t('upload.drag')}</p>
+              <h3 className="text-3xl font-bold text-slate-700 dark:text-slate-200 mb-2">Upload File</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-lg">Drag & Drop or Click to Upload</p>
               <p className="text-sm text-slate-400 dark:text-slate-500 mt-2 font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded inline-block">
                 Format: ID, Latitude, Longitude
               </p>

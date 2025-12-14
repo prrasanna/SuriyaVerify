@@ -48,7 +48,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, imageUrl, language }) =
       <div className="relative">
         <img
           className="w-full h-48 object-cover opacity-70 group-hover:opacity-100 transition-opacity"
-          src={imageUrl || `https://picsum.photos/seed/${result.sample_id}/400/300`}
+          src={imageUrl || `https://5.imimg.com/data5/SELLER/Default/2023/12/365947499/RW/UW/VB/89519488/15kw-on-grid-solar-power-system-1000x1000.jpeg`}
           alt="Rooftop satellite view"
         />
 

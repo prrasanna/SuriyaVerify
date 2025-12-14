@@ -72,6 +72,12 @@ export const translations: Translations = {
     ta: 'சரிபார்ப்பு',
   },
 
+  'nav.about': {
+  en: 'About',
+  hi: 'के बारे में',
+  ta: 'பற்றி',
+  },
+
   'nav.ethics': {
     en: 'Ethics',
     hi: 'नैतिकता',
