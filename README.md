@@ -1,5 +1,8 @@
+<img width="1899" height="776" alt="Output" src="https://github.com/user-attachments/assets/f194f0e9-c369-40f0-976e-c183e4c8d3a6" />
+
 
 [Prototype.pdf](https://github.com/user-attachments/files/24152375/Prototype.pdf)
+
 
 
 🔧 Hardware Integration (Proposed)
