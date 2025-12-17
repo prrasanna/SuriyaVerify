@@ -1,3 +1,6 @@
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d0b1527b-d4ef-4e6e-a48d-0a427b75fc75" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f284fc88-8009-455e-b6f1-13025a8d0523" />
+
 
 [Prototype.pdf](https://github.com/user-attachments/files/24152375/Prototype.pdf)
 
